@@ -1,0 +1,111 @@
+{
+	"ui": {
+		"server connect error": "Sorry, could not connect to server. Please try again later.",
+		"validation": {
+			"form": {
+				"player name": "Please enter a player name.",
+				"player name taken": "Please choose another name, a player with the same name is already in the game.",
+				"access code": "Sorry, your game access code is invalid.",
+				"player access code": "Sorry, your player access code is invalid.",
+				"game room locked": "Sorry, you can't join this game as the host has locked the room.",
+				"game already started": "Sorry, you can't join a game after it has already started.",
+				"question missing": "Please enter a question",
+				"answer missing": "Please enter an answer",
+				"answer repeated": "Please change your answer, it's too similar to an already submitted answer",
+				"answer from self": "Don't pick your own answer"
+			},
+			"usurp code": "Secret: %s"
+		},
+		"form": {
+			"player name": {
+				"placeholder": "Your Name"
+			},
+			"dummy player name": {
+				"placeholder": "New Player Name"
+			},
+			"access code": {
+				"placeholder": "Game Access Code"
+			},
+			"player access code": {
+				"placeholder": "Player Access Code"
+			},
+			"enter msg": {
+				"placeholder": "enter your msg here"
+			}
+		},
+		"title": {
+			"game title": "Quiz Time",
+			"game subtitle": "",
+			"game over": "Game Over!",
+			"access code": "Game Access Code",
+			"player access code": "Player Access Code",
+			"players": "Players",
+			"game options": "Game Options",
+			"templates": "Select Template",
+			"current roles": "Current Roles",
+			"empty": "None",
+			"no of players": "Number of Players",
+			"question source": "Question Source",
+			"scoring type": "Scoring Type",
+			"question": "Question"
+		},
+		"label": {
+			"access link": "Link to share this game",
+			"telegram link": "Telegram Link",
+			"waiting for question from db": "Waiting to get question from database...",
+			"names players answers submitted": "Players who have submitted answers so far",
+			"names players answers not submitted": "Players who have not submitted answers",
+			"names players answers chosen": "Players who have chosen answers so far",
+			"names players answers not chosen": "Players who have not chosen answers",
+			"last round results": "Last round results"
+		},		
+		"button": {
+			"start menu": {
+				"new game": "New Game",
+				"join game": "Join Game",
+				"resume game": "Try to Resume Game",
+				"rejoin game": "Rejoin Game",
+				"play game": "Play Game",
+				"intro": "Introduction",
+				"rules": "How to Host",
+				"guide": "How to Use"
+			},
+			"game menu": {
+				"start game": "Start Game",
+				"end game": "End Game",
+				"leave game": "Leave Game",
+				"prepare game": "Prepare Game",
+				"hide access": "Hide Access",
+				"show access": "Show Access",
+				"hide chat": "Hide Chat",
+				"show chat": "Show Chat",
+				"submit question": "Submit Question",
+				"submit answer": "Submit Answer",
+				"skip question": "Skip Question",
+				"choose answer": "Choose this answer"
+			}
+		},
+		"dialog": {
+			"host close window": "As you are the game host, please manually leave the game first to avoid causing problems for the other users.",
+			"player close window": "If you want to leave the game, please press the 'Leave Game' button first. Otherwise, you will remain in the game, just open another window in the same browser to resume.",
+			"player leave game": "Are you sure you want to leave?",
+			"transfer host": "Are you sure you want to make %s the new game host?",
+			"remove player": "Are you sure you want to remove %s from the game?"
+		},
+		"player info": {
+			"host": "host",
+			"you": "you",
+			"teleconnected": "Connected on Telegram"
+		},
+		"game info": {
+			"locked": "Locked",
+			"open": "Open"
+		}
+	},
+	"telegram": {
+		"event": {
+			"game started": "Game started. Now waiting for next question...",
+			"game ended": "The game has ended."
+		}
+	}
+}

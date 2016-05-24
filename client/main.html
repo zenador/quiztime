@@ -1,0 +1,254 @@
+<head>
+	<title>Quiz Time</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+</head>
+
+<body><div id="overlay"></div></body>
+
+<template name="main">
+<div id="main">
+	{{> flashMessages}}
+	{{> tooltips}}
+	{{> Template.dynamic template=whichView}}
+	{{> ruleBox}}
+	{{> footer}}
+</div>
+</template>
+
+<template name="startMenu">
+<div id="startMenu">
+	<h2>{{_ "ui.title.game title" }}</h2>
+	{{_ "ui.title.game subtitle" }}<br><br>
+
+	<input type="text" id="playerName" name="playerName" placeholder='{{_ "ui.form.player name.placeholder" }}' value='{{playerName}}'>
+	<input autocorrect="off" autocapitalize="off" type="text" id="accessCode" name="accessCode" placeholder='{{_ "ui.form.access code.placeholder" }}' value='{{accessCode}}'>
+	<div class="buttonrow">
+		<button id="newgame" class="btn btn-success">{{_ "ui.button.start menu.new game" }}</button>
+		<button id="joingame" class="btn btn-info">{{_ "ui.button.start menu.join game" }}</button>
+		{{#if canResume}}
+			<button id="resumegame" class="btn btn-warning">{{_ "ui.button.start menu.resume game" }}</button>
+		{{/if}}
+	</div>
+	OR<br><br>
+	<input autocorrect="off" autocapitalize="off" type="text" id="playerAccessCode" name="playerAccessCode" placeholder='{{_ "ui.form.player access code.placeholder" }}' value='{{playerAccessCode}}'>
+	<button id="rejoingame" class="btn btn-warning">{{_ "ui.button.start menu.rejoin game" }}</button>
+</div>
+</template>
+
+<template name="lobby">
+<div id="lobby">
+	{{#if isGameState 'inProgress'}}
+	
+		{{> choiceBox}}
+
+	{{/if}}
+
+	{{#if isGameState 'over'}}
+
+		<h5>{{_ "ui.title.game over" }}</h5>
+
+	{{/if}}
+
+	{{> chat}}
+	
+	{{> playerList}}
+
+	{{#if isGameState 'waitingForPlayers'}}
+
+		{{#if isHost}}
+			{{> gameOptions}}
+		{{else}}
+			{{> gameInfo}}
+		{{/if}}
+
+	{{/if}}
+
+	{{> gameMenu}}
+</div>
+</template>
+
+<template name="accessCode">
+<div class="accessCode">
+	{{_ "ui.title.access code" }}: {{accessCode}} <a href="game/{{accessCode}}">{{_ "ui.label.access link" }}</a>
+	<br>
+	{{_ "ui.title.player access code" }}: {{playerAccessCode}}
+	<br>
+	<a href="http://telegram.me/QuizTimeBot" target="_blank">{{_ "ui.label.telegram link" }}</a>
+</div>
+</template>
+
+<template name="playerList">
+{{#unless hidePlayerList}}
+{{> accessCode}}
+<div class="playerList">
+	<button id="toggleAccess" class="btn btn-warning">{{_ "ui.button.game menu.hide access" }}</button>
+	{{_ "ui.title.players" }} ({{numPlayers}}):
+	<ul>
+	{{#each players}}
+		<li>
+			{{this.name}}
+			{{#if isYou this._id}}({{_ "ui.player info.you"}}){{/if}}
+			{{#if equals this.isHost true}}({{_ "ui.player info.host"}}){{/if}}
+			{{#if this.telegram}}({{_ "ui.player info.teleconnected"}}){{/if}}
+			: {{this.score}}
+			{{#if isHost}}
+				{{#if equals this.isHost false}}
+					<button class="removePlayer btn btn-info compressed" data-playerId="{{this._id}}" data-playerName="{{this.name}}">x</button>
+					<button class="transferHost btn btn-info compressed" data-playerId="{{this._id}}" data-playerName="{{this.name}}">(&lt;-)</button>
+				{{/if}}
+			{{/if}}
+		</li>
+	{{/each}}
+	</ul>
+	{{#if isHost}}
+		<button id="lockGameRoom" class="btn btn-info">{{#if roomIsLocked}}{{_ "ui.game info.locked"}}{{else}}{{_ "ui.game info.open"}}{{/if}}</button>
+	{{/if}}
+</div>
+{{/unless}}
+</template>
+
+<template name="gameMenu">
+	<div class="buttonrow">
+		{{#if isHost}}
+			{{#if isGameState 'inProgress'}}
+				<button class="btn btn-danger endgame ingame" data-clickcount="0">&#9632; {{_ "ui.button.game menu.end game" }}</button>
+			{{else}} {{#if isGameState 'over'}}
+				<button class="btn btn-danger preparegame ingame">{{_ "ui.button.game menu.prepare game" }}</button>
+			{{else}} {{#if isGameState 'waitingForPlayers'}}
+				<button id="startgame" class="btn btn-success">{{_ "ui.button.game menu.start game" }}</button>
+			{{/if}} {{/if}} {{/if}}
+		{{/if}}
+
+		{{#if isGameState 'waitingForPlayers'}}
+			<button class="btn btn-danger leavegame inlobby">{{_ "ui.button.game menu.leave game" }}</button>
+		{{else}}
+			<button class="btn btn-danger leavegame ingame">&#9632; {{_ "ui.button.game menu.leave game" }}</button>
+		{{/if}}
+	</div>
+</template>
+
+<template name="gameInfo">
+<div id="gameInfo">
+	<ul class="options">
+		<li>{{_ "ui.title.question source" }}: {{questionSource}}</li>
+		<li>{{_ "ui.title.scoring type" }}: {{scoringType}}</li>
+	</ul>
+</div>
+</template>
+
+<template name="gameOptions">
+<div id="gameOptions">
+	{{_ "ui.title.question source" }}:
+	<select id="optionQnSource">
+		{{#each optionQnSource}}
+			{{#if equals this questionSource}}
+				<option value="{{this}}" selected>{{this}}</option>
+			{{else}}
+				<option value="{{this}}">{{this}}</option>
+			{{/if}}
+		{{/each}}
+	</select><br>
+	{{_ "ui.title.scoring type" }}:
+	<select id="optionScoring">
+		{{#each optionScoring}}
+			{{#if equals this scoringType}}
+				<option value="{{this}}" selected>{{this}}</option>
+			{{else}}
+				<option value="{{this}}">{{this}}</option>
+			{{/if}}
+		{{/each}}
+	</select>
+</div>
+</template>
+
+<template name="choiceBox">
+<div id="choiceBox">
+	{{#if isGamePhase 'Waiting for question'}}
+		{{#if isSourcePlayers}}
+			{{_ "ui.title.question" }}:
+			<div class="action">
+				<textarea id="question"></textarea>
+				<button id="submitQuestion" class="btn btn-warning">{{_ "ui.button.game menu.submit question" }}</button>
+			</div>
+		{{else}}
+			{{_ "ui.label.waiting for question from db" }}<br>
+		{{/if}}
+	{{/if}}
+	{{#if isGamePhase 'Waiting for answers'}}
+		{{{question}}}<br>
+		<div class="action">
+			<textarea id="answer"></textarea>
+			<button id="submitAnswer" class="btn btn-warning">{{_ "ui.button.game menu.submit answer" }}</button>
+		</div><br>
+		
+		{{_ "ui.label.names players answers submitted" }} - {{playersAnswersSubmitted}}<br>
+		{{_ "ui.label.names players answers not submitted" }} - {{playersAnswersNotSubmitted}}<br>
+
+		{{#if isHost}}<br><button id="skipQuestion" class="btn btn-info">{{_ "ui.button.game menu.skip question" }}</button><br>{{/if}}
+	{{/if}}
+	{{#if isGamePhase 'Waiting for answers to be chosen'}}
+		{{{question}}}<br>
+		<div class="action">
+			{{#each answers}}
+				<input type="radio" name="answerChoice" value="{{this}}" />{{this}}<br />
+			{{/each}}
+			<button id="chooseAnswer" class="btn btn-warning" disabled>{{_ "ui.button.game menu.choose answer" }}</button>
+		</div><br>
+
+		{{_ "ui.label.names players answers chosen" }} - {{playersAnswersChosen}}<br>
+		{{_ "ui.label.names players answers not chosen" }} - {{playersAnswersNotChosen}}<br>
+
+		{{#if isHost}}<br><button id="skipQuestion" class="btn btn-info">{{_ "ui.button.game menu.skip question" }}</button><br>{{/if}}
+	{{/if}}
+
+	{{#if lastRoundPersonalResult}}<br>{{{lastRoundPersonalResult}}}<br>{{/if}}
+	{{#if lastRoundResult}}<br>{{_ "ui.label.last round results" }}:<br>{{{lastRoundResult}}}{{/if}}
+</div>
+</template>
+
+<template name="chat">
+<div id="chat">
+	<input type="text" id="msg" name="msg" placeholder='{{_ "ui.form.enter msg.placeholder" }}'>
+	<button id="sendmsg" class="btn btn-warning">&gt;</button>
+	<ul>
+	{{#each messages}}
+		<li>
+			{{sender}}: {{content}} <em>{{formatTime createdAt}}</em>
+		</li>
+	{{/each}}
+	</ul>
+</div>
+
+<div class="buttonrow">
+	<button id="toggleChat" class="btn btn-warning">{{_ "ui.button.game menu.hide chat" }}</button>
+</div>
+</template>
+
+<template name="tooltippy">
+	<button class="btn-tooltip" data-tooltip="{{_ text}}" data-tooltip-direction="e"></button>
+</template>
+
+<template name="ruleBox">
+<div id="ruleBox">
+	<div class="buttonrow">
+		<button id="toggleIntro" class="btn btn-primary">{{_ "ui.button.start menu.intro" }}</button>
+		<!--
+		<button id="toggleRules" class="btn btn-primary">{{_ "ui.button.start menu.rules" }}</button>
+		<button id="toggleGuide" class="btn btn-primary">{{_ "ui.button.start menu.guide" }}</button>
+		-->
+	</div>
+	<!--
+	{{> introContent}}
+	{{> ruleContent}}
+	{{> guideContent}}
+	-->
+</div>
+</template>
+
+<template name="footer">
+<div id="footer">
+	Version {{versionNo}}.
+	Copyright &copy; 2015 Zenador. <span id="usurp" data-clickcount="0">All rights reserved.</span> Free to use.<br>
+	<a href="http://nightphase.herokuapp.com/" target="_blank">Hidden role games</a> | <a href="http://codenamesgame.herokuapp.com/" target="_blank">Codenames</a> | <a href="http://perceivegame.herokuapp.com/" target="_blank">Perceive</a>
+</div>
+</template>
