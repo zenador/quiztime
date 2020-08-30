@@ -4,7 +4,7 @@
 			"default_method": "persistent"
 		},
 		"ga": {
-			"account":"GOOGLE ANALYTICS ACCOUNT TOKEN"
+			"account": "GOOGLE ANALYTICS ACCOUNT TOKEN"
 		}
 	},
 	"private": {
@@ -15,9 +15,5 @@
 		"env": {
 			"MONGO_URL": "MONGO DB LINK"
 		}
-	},
-	"kadira": {
-		"appId": "KADIRA APP ID",
-		"appSecret": "KADIRA APP SECRET"
 	}
 }
